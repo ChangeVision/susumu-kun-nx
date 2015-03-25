@@ -1,0 +1,10 @@
+{
+  "appName": {
+    "message": "進捗管理 ススム君 ネクスト",
+    "description": "The name of the application"
+  },
+  "appDescription": {
+    "message": "githubのラベルを変更するchrome拡張です",
+    "description": "The description of the application"
+  }
+}
