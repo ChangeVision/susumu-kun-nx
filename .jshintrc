@@ -23,6 +23,9 @@
     "chrome": true,
     "crypto": true,
     "GitHub": true,
-    "Promise": true
+    "Promise": true,
+    "GitHubOptions" : true,
+    "issueUrlRegExp" : true,
+    "$": true
   }
 }
