@@ -11,6 +11,9 @@
   "background": {
     "scripts": [
       "scripts/chromereload.js",
+      "bower_components/bluebird/js/browser/bluebird.js",
+      "scripts/github.js",
+      "scripts/GitHubOptions.js",
       "scripts/background.js"
     ]
   },
