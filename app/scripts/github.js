@@ -23,17 +23,15 @@
      * @param {Object} [options] - API parameters
      * @param {String} [options.client_id] - client id
      * @param {String} [options.client_secret] - client secret
-     * @param {String} [options.scope=topic.read] - scope
+     * @param {String} [options.scope=repo] - scope
      * @param {String} [options.redirect_uri] - redirect uri
      * @param {String} [options.access_token] - access token
-     * @param {String} [options.refresh_token] - refresh token
      * @see {@link https://developer.github.com/v3/oauth/}
      */
     function GitHubClass(options) {
       self = this;
       options = options || {};
       self.accessToken = options.access_token;
-      self.refreshToken = options.refresh_token;
 
       clientId = options.client_id;
       clientSecret = options.client_secret;
@@ -51,7 +49,7 @@
           if (xhr.status === 200) {
             resolve(JSON.parse(xhr.responseText));
           } else {
-            // { "error": "invalid_request", "error_description": "grant_type not found"}
+            // { 'error': 'invalid_request', 'error_description': 'grant_type not found'}
             reject(JSON.parse(xhr.responseText));
           }
         };
@@ -73,13 +71,13 @@
             resolve(JSON.parse(xhr.responseText));
           } else if (xhr.status === 400 || xhr.status === 401) {
             // 400; Bad Request
-            // 400: WWW-Authenticate: Bearer error="invalid_request", error_description="Access token was not specified"
-            // 401: WWW-Authenticate: Bearer error="invalid_token", error_description="Invalid access token"
-            // 401: WWW-Authenticate: Bearer error="invalid_token", error_description="The access token expired"
-            // 401: WWW-Authenticate: Bearer error="invalid_scope"
+            // 400: WWW-Authenticate: Bearer error='invalid_request', error_description='Access token was not specified'
+            // 401: WWW-Authenticate: Bearer error='invalid_token', error_description='Invalid access token'
+            // 401: WWW-Authenticate: Bearer error='invalid_token', error_description='The access token expired'
+            // 401: WWW-Authenticate: Bearer error='invalid_scope'
             var authMessage = (xhr.getResponseHeader('WWW-Authenticate') || ''),
-              errorMatch = (authMessage.match(/error="(\w+)"/) || []),
-              errorDescriptionMatch = (authMessage.match(/error_description="(\w+)"/) || []),
+              errorMatch = (authMessage.match(/error='(\w+)'/) || []),
+              errorDescriptionMatch = (authMessage.match(/error_description='(\w+)'/) || []),
               error = (errorMatch.length > 1) ? errorMatch[1] : xhr.statusText,
               errorDescription = (errorDescriptionMatch.length > 1) ? errorDescriptionMatch[1] : '';
             reject({'status': xhr.status, 'error': error, 'error_description': errorDescription});
@@ -94,6 +92,7 @@
           xhr.setRequestHeader('Content-Type', options['Content-Type']);
         }
         xhr.setRequestHeader('Authorization', 'token ' + encodeURIComponent(self.accessToken));
+
         xhr.timeout = self.timeout;
         xhr.send(params);
       });
@@ -120,6 +119,7 @@
         var authorizeUrl = GitHubClass.OAUTH_BASE_URL + 'authorize?client_id=' + encodeURIComponent(clientId || options.client_id) +
         '&redirect_uri=' + encodeURIComponent(redirectUri || options.redirect_uri) +
         '&scope=' + encodeURIComponent(scope || options.scope) + '&response_type=code';
+        console.log(authorizeUrl);
         chrome.identity.launchWebAuthFlow(
           {'url': authorizeUrl, 'interactive': true},
           function(responseUrl) {
@@ -257,12 +257,104 @@
     /**
      * Get my repos
      * @memberof GitHub
-     * @method
+     * @method GET
      * @return {Promise} promise object - It will resolve with `response` data or fail with `error` object
-     * @see {@link https://developer.github.com/v3/users/emails/#list-email-addresses-for-a-user}
+     * @see {@link https://developer.github.com/v3/repos/#list-user-repositories}
      */
     GitHubClass.prototype.getRepos = function() {
       return requestApi(GitHubClass.API_BASE_URL + 'user/repos', 'GET', null);
+    };
+
+    /**
+     * Get labels from an issue
+     * @memberof GitHub
+     * @param {Object} [options] - issue or pull request parameter
+     * @param {Number} [options.issue_id] - issue id
+     * @param {String} [options.owner] - repository owner
+     * @param {String} [options.repo] - repository name
+     * @method POST
+     * @return {Promise} promise object - It will resolve with `response` data or fail with `error` object
+     * @see {@link https://developer.github.com/v3/issues/labels/#add-labels-to-an-issue}
+     */
+    GitHubClass.prototype.getLabels = function(options) {
+      var url = GitHubClass.API_BASE_URL + 'repos/' +
+        options.owner + '/' +
+        options.repo + '/' +
+        'issues/' +
+        options.number + '/' +
+        'labels';
+      return requestApi(url, 'GET', null);
+    };
+
+    /**
+     * Add label to an issue
+     * @memberof GitHub
+     * @param {Object} [options] - issue or pull request parameter
+     * @param {Number} [options.issue_id] - issue id
+     * @param {String} [options.owner] - repository owner
+     * @param {String} [options.repo] - repository name
+     * @param {String} [options.label] - label
+     * @method POST
+     * @return {Promise} promise object - It will resolve with `response` data or fail with `error` object
+     * @see {@link https://developer.github.com/v3/issues/labels/#add-labels-to-an-issue}
+     */
+    GitHubClass.prototype.addLabel = function(options) {
+      var url = GitHubClass.API_BASE_URL + 'repos/' +
+        options.owner + '/' +
+        options.repo + '/' +
+        'issues/' +
+        options.number + '/' +
+        'labels';
+      var params = [
+        options.label
+      ];
+      return requestApi(url, 'POST', JSON.stringify(params), {'Content-Type' : 'application/json;charset=UTF-8'});
+    };
+
+    /**
+     * Delete label to an issue
+     * @memberof GitHub
+     * @param {Object} [options] - issue or pull request parameter
+     * @param {Number} [options.issue_id] - issue id
+     * @param {String} [options.owner] - repository owner
+     * @param {String} [options.repo] - repository name
+     * @param {String}  [options.label] - label
+     * @method DELETE
+     * @return {Promise} promise object - It will resolve with `response` data or fail with `error` object
+     * @see {@link https://developer.github.com/v3/issues/labels/#remove-a-label-from-an-issue}
+     */
+    GitHubClass.prototype.deleteLabel = function(options) {
+      var url = GitHubClass.API_BASE_URL + 'repos/' +
+        options.owner + '/' +
+        options.repo + '/' +
+        'issues/' +
+        options.number + '/' +
+        'labels';
+      var params = options.label;
+      return requestApi(url, 'DELETE', JSON.stringify(params), {'Content-Type' : 'application/json;charset=UTF-8'});
+    };
+
+    /**
+     * Replace labels to an issue
+     * @memberof GitHub
+     * @param {Object} [options] - issue or pull request parameter
+     * @param {Number} [options.issue_id] - issue id
+     * @param {String} [options.owner] - repository owner
+     * @param {String} [options.repo] - repository name
+     * @param {Array}  [options.labels] - labels
+     * @method PUT
+     * @return {Promise} promise object - It will resolve with `response` data or fail with `error` object
+     * @see {@link https://developer.github.com/v3/issues/labels/#replace-all-labels-for-an-issue}
+     */
+    GitHubClass.prototype.replaceLabels = function(options) {
+      var url = GitHubClass.API_BASE_URL + 'repos/' +
+        options.owner + '/' +
+        options.repo + '/' +
+        'issues/' +
+        options.number + '/' +
+        'labels';
+      var params = options.labels;
+      return requestApi(url, 'PUT', JSON.stringify(params), {'Content-Type' : 'application/json;charset=UTF-8'});
     };
 
     return GitHubClass;
