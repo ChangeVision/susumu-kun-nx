@@ -12,8 +12,24 @@
     <!-- endbuild -->
   </head>
   <body>
-    <h1>'Allo, 'Allo!</h1>
+    <div id="header">
+      <h1>進捗変更ススム君</h1>
+    </div>
 
+    <div id="row">
+      <div id="container">
+        <form role="form">
+          <div class="btn-group" data-toggle="buttons">
+            <label class="btn btn-primary"><input type="radio" name="state" value="doing" />doing</label>
+            <label class="btn btn-primary"><input type="radio" name="state" value="accepting" />accepting</label>
+            <label class="btn btn-primary"><input type="radio" name="state" value="reopen" />reopen</label>
+            <label class="btn btn-primary"><input type="radio" name="state" value="done" />done</label>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="footer"></div>
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
