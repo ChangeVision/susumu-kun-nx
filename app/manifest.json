@@ -38,6 +38,7 @@
   "permissions": [
     "identity",
     "https://api.github.com/repos/*",
-    "https://github.com/"
+    "https://github.com/",
+    "tabs"
   ]
 }
