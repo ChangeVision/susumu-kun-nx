@@ -1,9 +1,41 @@
 'use strict';
 
-console.log('open popup');
-
 // use background.js variables
 var bg = chrome.extension.getBackgroundPage();
+var GitHub = bg.GitHub;
+
+var authorized = function(data){
+  $('<span>').text(data.login).appendTo($('#auth'));
+};
+
+var showMe = function(authorized,unauthorized){
+  GitHub.showMe().then(authorized,unauthorized);
+};
+
+var authorize = function(){
+  console.log('start authorize');
+  var success = function(data) {
+    GitHub.accessToken = data.access_token;
+    localStorage.access_token = data.access_token;
+    showMe(authorized);
+  };
+  var rejected = function() {
+    $('#auth_button').text('failed to authorize!');
+  };
+  GitHub.authorizeChromeApp().then(success,rejected);
+};
+
+var unauthorized = function(){
+  console.log('unauthorized');
+  var auth_button = $('<button/>')
+    .attr('class','btn btn-default')
+    .attr('id','auth_button')
+    .text('Login GitHub!')
+    .click(authorize);
+  auth_button.appendTo($('#auth'));
+};
+
+showMe(authorized,unauthorized);
 
 var githubUrl;
 
@@ -42,7 +74,7 @@ var replaceLabel = function(putLabels) {
       'number' : getGithubIssuesNumber(),
       'labels' : putLabels
     };
-    bg.GitHub.replaceLabels(params);
+    GitHub.replaceLabels(params);
   };
 };
 
@@ -53,7 +85,7 @@ var changeLabel = function(label){
     'repo' : getGithubRepo(),
     'number' : getGithubIssuesNumber()
   };
-  bg.GitHub.getLabels(params).then(replaceLabel(putLabels));
+  GitHub.getLabels(params).then(replaceLabel(putLabels));
 };
 
 getGithubUrl();
@@ -63,6 +95,7 @@ $('div.btn-group').on('click', function(events) {
   changeLabel(label);
 });
 
+/**
 var createTable = function(body){
   return function(name,desc){
     var row = $('<tr>').appendTo(body);
@@ -85,4 +118,4 @@ var showRepos = function(data) {
   $.map(data,parseRepos(reposInfo));
   $.each(reposInfo,createTable(reposBody));
 };
-
+*/
