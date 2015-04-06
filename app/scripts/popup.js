@@ -4,28 +4,28 @@
 var bg = chrome.extension.getBackgroundPage();
 var GitHub = bg.GitHub;
 
-var authorized = function(data){
+function authorized(data){
   $('<span>').text(data.login).appendTo($('#auth'));
 };
 
-var showMe = function(authorized,unauthorized){
+function showMe(authorized,unauthorized){
   GitHub.showMe().then(authorized,unauthorized);
 };
 
-var authorize = function(){
+function authorize(){
   console.log('start authorize');
-  var success = function(data) {
+  function success(data) {
     GitHub.accessToken = data.access_token;
     localStorage.access_token = data.access_token;
     showMe(authorized);
   };
-  var rejected = function() {
+  function rejected() {
     $('#auth_button').text('failed to authorize!');
   };
   GitHub.authorizeChromeApp().then(success,rejected);
 };
 
-var unauthorized = function(){
+function unauthorized(){
   console.log('unauthorized');
   var auth_button = $('<button/>')
     .attr('class','btn btn-default')
@@ -60,7 +60,7 @@ function getGithubIssuesNumber() {
   return githubUrl.match(bg.issueUrlRegExp)[4];
 }
 
-var replaceLabel = function(putLabels) {
+function replaceLabel(putLabels) {
   return function(labels){
     for (var i in labels) {
       var labelName = labels[i].name;
@@ -78,7 +78,8 @@ var replaceLabel = function(putLabels) {
   };
 };
 
-var changeLabel = function(label){
+function changeLabel(label){
+  window.close();
   var putLabels = [ label ];
   var params = {
     'owner' : getGithubOwner(),
@@ -96,7 +97,7 @@ $('div.btn-group').on('click', function(events) {
 });
 
 /**
-var createTable = function(body){
+function createTable(body){
   return function(name,desc){
     var row = $('<tr>').appendTo(body);
     var repo = $('<td>').appendTo(row);
@@ -106,13 +107,13 @@ var createTable = function(body){
   };
 };
 
-var parseRepos = function(reposInfo){
+function parseRepos(reposInfo){
   return function(repo){
     reposInfo[repo.full_name] = repo.description;
   };
 };
 
-var showRepos = function(data) {
+function showRepos(data) {
   var reposBody = $('table#repos tbody');
   var reposInfo = {};
   $.map(data,parseRepos(reposInfo));
