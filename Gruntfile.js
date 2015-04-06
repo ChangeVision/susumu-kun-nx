@@ -213,18 +213,14 @@ module.exports = function (grunt) {
     //     }
     //   }
     // },
-    // uglify: {
-    //   dist: {
-    //     files: {
-    //       '<%= config.dist %>/scripts/scripts.js': [
-    //         '<%= config.dist %>/scripts/scripts.js'
-    //       ]
-    //     }
-    //   }
-    // },
-    // concat: {
-    //   dist: {}
-    // },
+    //concat: {
+    //  dist: {}
+    //},
+    uglify: {
+      options: {
+        mangle: false
+      }
+    },
 
     // Copies remaining files to places other tasks can use
     copy: {

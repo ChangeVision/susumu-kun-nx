@@ -1,6 +1,6 @@
 {
   "name": "__MSG_appName__",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "manifest_version": 2,
   "description": "__MSG_appDescription__",
   "icons": {
@@ -13,7 +13,7 @@
       "scripts/chromereload.js",
       "bower_components/bluebird/js/browser/bluebird.js",
       "scripts/github.js",
-      "scripts/GitHubOptions.js",
+      "scripts/settings.js",
       "scripts/background.js"
     ]
   },
