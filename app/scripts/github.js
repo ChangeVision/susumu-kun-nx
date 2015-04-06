@@ -111,6 +111,7 @@
     GitHubClass.prototype.authorizeChromeApp = function(options) {
       options = options || {};
       return new Promise(function(resolve, reject) {
+        console.log('start authorize chrome app');
         if (!(chrome && chrome.identity)) {
           reject(new Error('chrome.identity API is unsupported'));
           return;
@@ -252,6 +253,18 @@
         '&grant_type=refresh_token' +
         '&refresh_token=' + encodeURIComponent(self.refreshToken || options.refresh_token);
       return requestAccessToken(param);
+    };
+
+    /**
+     * Show user name
+     * @memberof GitHub
+     * @method GET
+     * @return {Promise} promise object - It will resolve with `response` data or fail with `error` object
+     * @see {@link https://developer.github.com/v3/users/#get-the-authenticated-user}
+     */
+    GitHubClass.prototype.showMe = function() {
+      var url = GitHubClass.API_BASE_URL + 'user';
+      return requestApi(url, 'GET', null);
     };
 
     /**

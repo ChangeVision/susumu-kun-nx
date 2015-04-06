@@ -16,7 +16,5 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 });
 
 this.GitHub = new GitHub(GitHubOptions);
-var authorized = function(data){
-  GitHub.accessToken = data.access_token;
-};
-GitHub.authorizeChromeApp().then(authorized);
+console.log('localStorage' + localStorage.access_token);
+this.GitHub.accessToken = localStorage.access_token;
