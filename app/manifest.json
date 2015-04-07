@@ -42,6 +42,7 @@
     "identity",
     "https://api.github.com/repos/*",
     "https://github.com/",
-    "tabs"
+    "tabs",
+    "storage"
   ]
 }
