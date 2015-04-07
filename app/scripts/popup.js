@@ -6,6 +6,7 @@ var GitHub = bg.GitHub;
 
 function authorized(data){
   $('<span>').text(data.login).appendTo($('#auth'));
+  localStorage.access_token = GitHub.accessToken;
 };
 
 function showMe(authorized,unauthorized){
@@ -16,7 +17,6 @@ function authorize(){
   console.log('start authorize');
   function success(data) {
     GitHub.accessToken = data.access_token;
-    localStorage.access_token = data.access_token;
     showMe(authorized);
   };
   function rejected() {
