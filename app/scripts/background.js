@@ -7,7 +7,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
 this.issueUrlRegExp = new RegExp(
         'https:\/\/github.com\/(.+)\/(.+)\/(issues|pull)\/(.+)');
 
-this.stateLabels = [ 'doing', 'accepting', 'reopen', 'done' ];
+this.stateLabels = [ 'doing', 'wait accepting', 'accepting', 'reopen', 'done' ];
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   if (tab.url.match(issueUrlRegExp)) {
