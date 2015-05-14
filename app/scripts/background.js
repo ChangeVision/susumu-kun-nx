@@ -5,7 +5,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
 });
 
 this.issueUrlRegExp = new RegExp(
-        'https:\/\/github.com\/(.+)\/(.+)\/(issues|pull)\/(.+)');
+        'https:\/\/github.com\/(.+)\/(.+)\/(issues|pull)\/(\\d+)(.*)');
 
 this.stateLabels = [ 'doing', 'wait accepting', 'accepting', 'reopen', 'done' ];
 
